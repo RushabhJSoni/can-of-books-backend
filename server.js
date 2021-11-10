@@ -24,7 +24,7 @@ async function handleBooks (req,res){
 try {
   let booksFromDB = await Book.find({});
   if (booksFromDB) {
-  // if the cat cat reqest/query was successful send the cats
+  
   res.status(200).send(booksFromDB);
   } else {
     res.status(404).send('no books for you');
