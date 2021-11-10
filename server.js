@@ -22,24 +22,15 @@ app.delete('/books/:id', handleDeleteBooks);
 app.post('/books', handlePostBooks);
 
 async function handleBooks (req,res){
-
-try {
-  let booksFromDB = await Book.find({});
-  if (booksFromDB) {
-  
-  res.status(200).send(booksFromDB);
-  } else {
-    res.status(404).send('no books for you');
-
-  const email = req.query.email;
+    const email = req.query.email;
   try {
     let booksFromDB = await Book.find({email: email});
     if (booksFromDB) {
     res.status(200).send(booksFromDB);
     } else {
       res.status(404).send('no books for you');
-    }
-    } catch (e) {
+    } 
+  } catch (e) {
       console.error(e);
       res.status(500).send('server error')
     }
@@ -79,4 +70,4 @@ async function handleDeleteBooks(req,res){
 }
 
 
-app.listen(PORT,() =>console.log(`im listening on ${PORT}`) )
+app.listen(PORT,() =>console.log(`im listening on ${PORT}`))
