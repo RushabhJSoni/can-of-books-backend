@@ -20,6 +20,7 @@ app.get('/', (req, res) => res.send('hello'));
 app.get('/books', handleBooks);
 app.delete('/books/:id', handleDeleteBooks);
 app.post('/books', handlePostBooks);
+app.put('/books/:id', handlePutBooks);
 
 async function handleBooks (req,res){
     const email = req.query.email;
@@ -67,6 +68,19 @@ async function handleDeleteBooks(req,res){
     console.error(e);
     res.status(500).send('server error')
   }
+}
+
+async function handlePutBooks(req, res) {
+  const id = req.params.id;
+  const updatedData = { ...req.body, email: req.query.email }
+  try {
+    const updatedBook = await Book.findByIdAndUpdate(id, updatedData, { new: true, overwrite: true });
+    res.status(200).send(updatedBook)
+  } catch (e) {
+    console.log(e);
+    res.status(500).send('server error');
+  }
+
 }
 
 
