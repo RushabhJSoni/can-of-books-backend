@@ -21,21 +21,29 @@ app.get('/books', handleBooks);
 app.delete('/books/:id', handleDeleteBooks);
 app.post('/books', handlePostBooks);
 app.put('/books/:id', handlePutBooks);
+app.get('/user', getUser);
 
-async function handleBooks (req,res){
-    const email = req.query.email;
-  try {
-    let booksFromDB = await Book.find({email: email});
-    if (booksFromDB) {
-    res.status(200).send(booksFromDB);
-    } else {
-      res.status(404).send('no books for you');
-    } 
-  } catch (e) {
-      console.error(e);
-      res.status(500).send('server error')
-    }
-  }
+function handleBooks (request,response){
+  verifyUser(request, async(err, user) => {
+      if (err) {
+        response.send('invalid token');
+      } else {
+        
+        try {
+          const email = user.email;
+          let booksFromDB = await Book.find({email});
+          if (booksFromDB) {
+          response.status(200).send(booksFromDB);
+          } else {
+            response.status(404).send('no books for you');
+          }
+        } catch (e) {
+          console.error(e);
+          response.status(500).send('server error')
+        }
+      }
+    })
+  };
 
 async function handlePostBooks(req,res) {
 
@@ -80,8 +88,19 @@ async function handlePutBooks(req, res) {
     console.log(e);
     res.status(500).send('server error');
   }
-
 }
+
+  function getUser(request, response) {
+
+    verifyUser(request, (err, user) => {
+      if (err) {
+        response.send('invalid token');
+      } else {
+        response.send(user);
+      }
+    })
+}
+
 
 
 app.listen(PORT,() =>console.log(`im listening on ${PORT}`))
